@@ -12,11 +12,11 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setLogin } from "../../state"; 
+import { setLogin } from "../../state";
 import Dropzone from "react-dropzone";
-import FlexBetween from "../../components/FlexBetween"; 
+import FlexBetween from "../../components/FlexBetween";
 
-
+const API_URL = process.env.REACT_APP_API_URL;
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -49,7 +49,6 @@ const initialValuesLogin = {
 };
 
 const Form = () => {
-  
   const [errorMessage, setErrorMessage] = useState("");
   const [pageType, setPageType] = useState("login");
   const { palette } = useTheme();
@@ -65,52 +64,54 @@ const Form = () => {
       for (let value in values) {
         formData.append(value, values[value]);
       }
-  
+
       // Check if the user didn't upload a picture
       if (!values.picture) {
         // Set the default user image path
         formData.append("picturePath", "default-user.png");
         const defaultImage = await fetch("/assets/default-user.png");
         const imageBlob = await defaultImage.blob();
-        formData.append("picture", new File([imageBlob], "default-user.png", { type: "image/png" }));
+        formData.append(
+          "picture",
+          new File([imageBlob], "default-user.png", { type: "image/png" })
+        );
       } else {
         formData.append("picturePath", values.picture.name);
       }
-  
-      const savedUserResponse = await fetch("http://localhost:3001/auth/register", {
+
+      const savedUserResponse = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         body: formData,
       });
-  
+
       const savedUser = await savedUserResponse.json();
       onSubmitProps.resetForm();
-  
+
       if (savedUserResponse.ok) {
         setPageType("login");
       } else {
-        setErrorMessage(savedUser.message || "Registration failed. Please try again.");
+        setErrorMessage(
+          savedUser.message || "Registration failed. Please try again."
+        );
       }
     } catch (error) {
       console.error("Registration error:", error);
       setErrorMessage("Something went wrong. Please try again later.");
     }
   };
-  
-  
-  
-  
+
   const login = async (values, onSubmitProps) => {
     try {
-      const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
+      const loggedInResponse = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-  
+
       const loggedIn = await loggedInResponse.json();
-  
+
       onSubmitProps.resetForm();
-  
+
       if (loggedIn.token) {
         dispatch(
           setLogin({
@@ -127,7 +128,6 @@ const Form = () => {
       setErrorMessage("Something went wrong. Please try again later.");
     }
   };
-  
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
@@ -160,7 +160,7 @@ const Form = () => {
             }}
           >
             {isRegister && (
-  <>
+              <>
                 <TextField
                   label="First Name"
                   onBlur={handleBlur}
@@ -237,7 +237,6 @@ const Form = () => {
               </>
             )}
 
-
             <TextField
               label="Email"
               onBlur={handleBlur}
@@ -262,12 +261,12 @@ const Form = () => {
           </Box>
 
           {/* BUTTONS */}
-                  <Box>
-                  {errorMessage && (
-            <Typography variant="body2" color="error" sx={{ mb: 2 }}>
-              {errorMessage}
-            </Typography>
-          )}
+          <Box>
+            {errorMessage && (
+              <Typography variant="body2" color="error" sx={{ mb: 2 }}>
+                {errorMessage}
+              </Typography>
+            )}
             <Button
               fullWidth
               type="submit"

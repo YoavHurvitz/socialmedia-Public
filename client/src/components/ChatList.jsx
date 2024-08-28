@@ -7,10 +7,11 @@ const ChatList = ({ onSelectChat }) => {
   const [friends, setFriends] = useState([]);
   const user = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const getConversations = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/messages/${user._id}`, {
+      const response = await fetch(`${API_URL}/messages/${user._id}`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       const allMessages = await response.json();
@@ -27,14 +28,14 @@ const ChatList = ({ onSelectChat }) => {
 
       // Fetch user data for each conversation
       const userPromises = Object.keys(groupedConversations).map(async (userId) => {
-        const userResponse = await fetch(`http://localhost:3001/users/${userId}`, {
+        const userResponse = await fetch(`${API_URL}/users/${userId}`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
         const userData = await userResponse.json();
         return {
           userId,
           name: `${userData.firstName} ${userData.lastName}`,
-          profilePicture: `http://localhost:3001/assets/${userData.picturePath}` || '/assets/default-user.png',
+          profilePicture: `${API_URL}/assets/${userData.picturePath}` || '/assets/default-user.png',
           lastMessage: groupedConversations[userId][groupedConversations[userId].length - 1].content,
           timestamp: groupedConversations[userId][groupedConversations[userId].length - 1].timestamp,
         };
@@ -51,7 +52,7 @@ const ChatList = ({ onSelectChat }) => {
 
   const getFriends = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/users/${user._id}/friends`, {
+      const response = await fetch(`${API_URL}/users/${user._id}/friends`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       const friendsData = await response.json();
@@ -104,7 +105,7 @@ const ChatList = ({ onSelectChat }) => {
             onClick={() => onSelectChat(friend._id)}
           >
             <ListItemAvatar>
-              <Avatar alt={friend.name} src={`http://localhost:3001/assets/${friend.picturePath}` || '/assets/default-user.png'} />
+              <Avatar alt={friend.name} src={`${API_URL}/assets/${friend.picturePath}` || '/assets/default-user.png'} />
             </ListItemAvatar>
             <ListItemText
               primary={friend.name}

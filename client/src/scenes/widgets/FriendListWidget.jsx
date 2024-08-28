@@ -10,10 +10,11 @@ const FriendListWidget = ({ userId, isOwnProfile }) => {
   const { palette } = useTheme();
   const token = useSelector((state) => state.token);
   const friends = useSelector((state) => state.user.friends) || [];
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const getFriends = async () => {
     const response = await fetch(
-      `http://localhost:3001/users/${userId}/friends`,
+      `${API_URL}/users/${userId}/friends`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
@@ -47,7 +48,6 @@ const FriendListWidget = ({ userId, isOwnProfile }) => {
               subtitle={friend.occupation}
               userPicturePath={friend.picturePath}
               hideAddRemove={!isOwnProfile}
-
             />
           ))}
       </Box>

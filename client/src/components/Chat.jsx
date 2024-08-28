@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, TextField, Button, Avatar, useTheme } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-
 const Chat = ({ socket, receiverId, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -11,22 +10,25 @@ const Chat = ({ socket, receiverId, onClose }) => {
   const token = useSelector((state) => state.token);
   const messagesEndRef = useRef(null);
   const theme = useTheme();
+  const API_URL = process.env.REACT_APP_API_URL;
+
+
 
   useEffect(() => {
     const fetchChatData = async () => {
       try {
         // Fetch receiver data
-        const receiverResponse = await fetch(`http://localhost:3001/users/${receiverId}`, {
+        const receiverResponse = await fetch(`${API_URL}/users/${receiverId}`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
         const receiverData = await receiverResponse.json();
         setReceiverData({
           name: `${receiverData.firstName} ${receiverData.lastName}`,
-          profilePicture: `http://localhost:3001/assets/${receiverData.picturePath}` || '/assets/default-user.png',
+          profilePicture: `${API_URL}/assets/${receiverData.picturePath}` || '/assets/default-user.png',
         });
 
         // Fetch previous messages
-        const messagesResponse = await fetch(`http://localhost:3001/messages/${user._id}/${receiverId}`, {
+        const messagesResponse = await fetch(`${API_URL}/messages/${user._id}/${receiverId}`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
         const messagesData = await messagesResponse.json();

@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setFriends } from "../../state";
 import ChatIconButton from '../../components/ChatIcon';
-import ChatOverlay from '../../components/ChatOverlay'; // Import ChatOverlay
+import ChatOverlay from '../../components/ChatOverlay';
 
 const UserWidget = ({ userId, picturePath, socket }) => {
   const [user, setUser] = useState(null);
@@ -22,12 +22,12 @@ const UserWidget = ({ userId, picturePath, socket }) => {
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
-
+  const API_URL = process.env.REACT_APP_API_URL;
   const isOwnProfile = loggedInUser._id === userId;
   const isFriend = Array.isArray(friends) && friends.find((friend) => friend._id === loggedInUser._id);
 
   const getUser = async () => {
-    const response = await fetch(`http://localhost:3001/users/${userId}`, {
+    const response = await fetch(`${API_URL}/users/${userId}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -37,7 +37,7 @@ const UserWidget = ({ userId, picturePath, socket }) => {
 
   const patchFriend = async () => {
     const response = await fetch(
-      `http://localhost:3001/users/${loggedInUser._id}/${userId}`,
+      `${API_URL}/users/${loggedInUser._id}/${userId}`,
       {
         method: "PATCH",
         headers: {

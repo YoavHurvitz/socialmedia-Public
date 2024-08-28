@@ -6,12 +6,13 @@ const useSocket = () => {
   const [socket, setSocket] = useState(null);
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     let newSocket = null;
 
     if (token && user) {
-      newSocket = io('http://localhost:3001', {
+      newSocket = io(API_URL, {
         auth: { token },
         transports: ['websocket'],
       });
@@ -46,7 +47,7 @@ const useSocket = () => {
         newSocket.close();
       }
     };
-  }, [token, user]);
+  }, [token, user, API_URL]);
 
   return socket;
 };

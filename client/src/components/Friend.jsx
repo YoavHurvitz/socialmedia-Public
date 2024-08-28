@@ -23,9 +23,11 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, hideAddRemove = fal
 
   const isFriend = Array.isArray(friends) && friends.find((friend) => friend._id === friendId);
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const patchFriend = async () => {
     const response = await fetch(
-      `http://localhost:3001/users/${_id}/${friendId}`,
+      `${API_URL}/users/${_id}/${friendId}`,
       {
         method: "PATCH",
         headers: {
