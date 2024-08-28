@@ -20,7 +20,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
-import Message from "./models/Message.js"; // Import the new Message model
+import Message from "./models/Message.js";
 import { users, posts } from "./data/index.js";
 
 /* CONFIGURATIONS */
@@ -58,8 +58,14 @@ app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 app.use("/messages", messageRoutes);
 
+// NEW: Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/build')));
 
-
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+  });
+}
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
@@ -79,7 +85,7 @@ mongoose.connect(process.env.MONGO_URL, {
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: API_URL, // Replace with your client's URL
+    origin: process.env.CLIENT_URL || "*", // NEW: Use environment variable for client URL
     methods: ["GET", "POST"]
   }
 });

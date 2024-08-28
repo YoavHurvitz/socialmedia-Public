@@ -1,0 +1,17 @@
+{
+    "name": "fullstack-app",
+    "version": "1.0.0",
+    "description": "Fullstack application with React client and Express server",
+    "main": "server/index.js",
+    "scripts": {
+      "start": "node server/index.js",
+      "build": "cd client && npm install && npm run build && cd ../server && npm install",
+      "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm start\""
+    },
+    "engines": {
+      "node": "20.x"
+    },
+    "dependencies": {
+      "concurrently": "^8.0.1"
+    }
+  }
